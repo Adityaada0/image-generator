@@ -1,0 +1,13 @@
+# Core dependencies for CPU/integrated GPU image generation
+onnxruntime-directml>=1.16.0  # Windows DirectML for integrated GPU acceleration
+diffusers>=0.21.0
+transformers>=4.30.0
+safetensors>=0.3.0
+accelerate>=0.20.0
+pillow>=9.0.0
+numpy<2.0.0
+
+# Web server (optional, for the Flask UI)
+flask>=2.3.0
+# Optional: For Intel CPU optimization
+#  onnxruntime-openvino>=1.16.0
