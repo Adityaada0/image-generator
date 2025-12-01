@@ -148,6 +148,18 @@
             cursor: not-allowed;
         }
         
+        .btn-download {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+        }
+        
         .output-section {
             margin-top: 40px;
             text-align: center;
@@ -277,17 +289,23 @@
         
         <div class="output-section">
             <img id="generatedImage" alt="Generated image">
+            <button type="button" class="btn btn-download" id="downloadBtn" style="display:none; margin-top: 15px;">
+                📥 Download Image
+            </button>
         </div>
     </div>
     
     <script>
         const form = document.getElementById('generatorForm');
         const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const generatedImage = document.getElementById('generatedImage');
         const stepsValue = document.getElementById('stepsValue');
         const heightValue = document.getElementById('heightValue');
+        
+        let currentImagePath = null;
         
         document.getElementById('steps').addEventListener('input', (e) => {
             stepsValue.textContent = e.target.value;
@@ -295,6 +313,17 @@
         
         document.getElementById('height').addEventListener('input', (e) => {
             heightValue.textContent = e.target.value + 'px';
+        });
+        
+        downloadBtn.addEventListener('click', () => {
+            if (currentImagePath) {
+                const link = document.createElement('a');
+                link.href = `/outputs/${currentImagePath}`;
+                link.download = currentImagePath;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         });
         
         form.addEventListener('submit', async (e) => {
@@ -306,6 +335,7 @@
             const width = height; // Square image
             
             generateBtn.disabled = true;
+            downloadBtn.style.display = 'none';
             loading.style.display = 'block';
             error.style.display = 'none';
             generatedImage.style.display = 'none';
@@ -323,8 +353,10 @@
                     throw new Error(data.error);
                 }
                 
+                currentImagePath = data.path;
                 generatedImage.src = data.image;
                 generatedImage.style.display = 'block';
+                downloadBtn.style.display = 'block';
             } catch (err) {
                 error.textContent = '❌ Error: ' + err.message;
                 error.style.display = 'block';

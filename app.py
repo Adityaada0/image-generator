@@ -72,7 +72,7 @@ def generate_image():
         return jsonify({
             'success': True,
             'image': f'data:image/png;base64,{img_base64}',
-            'path': output_path
+            'path': 'generated.png'
         })
     
     except Exception as e:
@@ -85,6 +85,17 @@ def generate_image():
 def status():
     """Check if generation is in progress."""
     return jsonify({'in_progress': generation_in_progress})
+
+@app.route('/outputs/<filename>', methods=['GET'])
+def download_image(filename):
+    """Download a generated image."""
+    try:
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        if os.path.exists(filepath) and filename.endswith('.png'):
+            return send_file(filepath, mimetype='image/png', as_attachment=True, download_name=filename)
+        return jsonify({'error': 'File not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     init_generator()
